@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_training_assignment1/injection.dart';
 import 'screens/splash/splash_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  configureDependencies();
   runApp(const MyApp());
 }
 

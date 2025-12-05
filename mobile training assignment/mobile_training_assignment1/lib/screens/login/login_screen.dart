@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
-import 'package:mobile_training_assignment1/services/auth_service.dart';
+import 'package:mobile_training_assignment1/data/repository.dart';
+import 'package:mobile_training_assignment1/injection.dart';
 import '../../core/colors.dart';
-import '../signup/signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,7 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService();
+  final _repository = getIt<Repository>();
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    'Welcome back you\'ve been missed',
+                    'Welcome back you\\\'ve been missed',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.grey,
@@ -88,18 +87,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        final success = await _authService.login(
-                          _usernameController.text,
-                          _passwordController.text,
-                        );
-                        if (success) {
+                        try {
+                          final response = await _repository.login(
+                            _usernameController.text,
+                            _passwordController.text,
+                          );
+                          print(response);
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Logged in successfully'),
                             ),
                           );
-                          // You can navigate to a home screen here
-                        } else {
+                        } catch (e) {
+                          print(e.toString());
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Invalid username or password'),
@@ -113,22 +113,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     child: const Text('Login'),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("don't have an account?"),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                          );
-                        },
-                        child: const Text('Sign Up'),
-                      ),
-                    ],
                   ),
                 ],
               ),
